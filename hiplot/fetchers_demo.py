@@ -151,7 +151,9 @@ def demo_customize() -> hip.Experiment:
         # Don't display `uid` and `from_uid` columns to the user
         'hide': ['uid', 'from_uid'],
         # In the table, order rows by default
-        'order_by': [['pct_success', 'desc']]
+        'order_by': [['pct_success', 'desc']],
+        # Specify the order for columns
+        'order': ['time'],  # Put column time first on the left
     })
 
     # Provide configuration for the XY graph
@@ -218,6 +220,13 @@ def demo_color_scheme_accent() -> hip.Experiment:
     return exp
 
 
+def demo_color_interpolate_inverse() -> hip.Experiment:
+    exp = demo_color_interpolate()
+    assert exp.parameters_definition["exp_metric"].colormap is not None
+    exp.parameters_definition["exp_metric"].colormap += "#inverse"
+    return exp
+
+
 def demo_axis_style() -> hip.Experiment:
     data: t.List[t.Dict[str, t.Any]] = []
     for _ in range(100):
@@ -275,6 +284,32 @@ def demo_force_constant_pplot() -> hip.Experiment:
     return exp
 
 
+def demo_first_value_nan() -> hip.Experiment:
+    return hip.Experiment.from_iterable([
+        {},
+        {'a': None},
+        {'a': 2},
+        {'a': 2.1},
+        {'a': 2.2},
+        {'a': 5.5},
+        {'a': math.nan},
+    ])
+
+
+def demo_weighted_rows() -> hip.Experiment:
+    experiment = hip.Experiment.from_iterable([
+        {'w': 1.0, 'a': 1, 'b': 1},
+        {'w': 2.0, 'a': 2, 'b': 1},
+        {'w': -2.0, 'a': 2, 'b': 1},
+        {'w': math.inf, 'a': 2, 'b': 2},
+        {'w': 'not_a_number', 'a': 2, 'b': 3},
+        {'w': None, 'a': 3, 'b': 3},
+        {'a': 4, 'b': 3},
+    ])
+    experiment.weightcolumn = "w"
+    return experiment
+
+
 README_DEMOS: t.Dict[str, t.Callable[[], hip.Experiment]] = {
     "demo": demo,
     "demo_big": lambda: demo(1000),
@@ -295,4 +330,7 @@ README_DEMOS: t.Dict[str, t.Callable[[], hip.Experiment]] = {
     "demo_customize": demo_customize,
     "demo_long_names": demo_long_names,
     "demo_force_constant_pplot": demo_force_constant_pplot,
+    "demo_color_interpolate_inverse": demo_color_interpolate_inverse,
+    "demo_first_value_nan": demo_first_value_nan,
+    "demo_weighted_rows": demo_weighted_rows,
 }

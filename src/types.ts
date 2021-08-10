@@ -37,11 +37,18 @@ export interface HiPlotValueDef { // Mirror of python `hip.ValueDef`
     label_css: string | null;
 };
 
+export interface DatapointsCompressed {
+    columns: Array<string>;
+    rows: Array<Array<any>>;
+};
+
 export interface HiPlotExperiment { // Mirror of python `hip.Experiment`
     datapoints: Array<Datapoint>,
+    datapoints_compressed?: DatapointsCompressed,
     parameters_definition?: {[key: string]: HiPlotValueDef},
     colormap?: string;
     colorby?: string;
+    weightcolumn?: string;
     display_data?: {[key: string]: {[key2: string]: any}},
 }
 
